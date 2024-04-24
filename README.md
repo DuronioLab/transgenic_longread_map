@@ -1,4 +1,7 @@
 # transgenic_longread_map
+
+[![DOI](https://zenodo.org/badge/791369050.svg)](https://zenodo.org/doi/10.5281/zenodo.11060915)
+
 Script for use in UNC Longleaf that will take whole genome long read data (FASTQ), a reference (FASTA), and a set of unique sequences to anchor the long reads in (FASTA) and will generate an alignment (SAM/BAM) and a consensus sequence.
 
 # Running
