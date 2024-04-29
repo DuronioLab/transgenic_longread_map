@@ -5,12 +5,12 @@
 #SBATCH --time=5:00:00
 #SBATCH --mem=16g
 
-#################################################################################################################################
-#                                                                                                                               #
-#   Run the script with:                                                                                                        #
-#   sbatch --time=5:00:00 --mem=16g --ntasks=2 --wrap="sh ./scripts/alignment_script.sh <ref.fasta> <query.fasta> [min_length]" #
-#                                                                                                                               #
-#################################################################################################################################
+#########################################################################################################################################
+#                                                                                                                                       #
+#   Run the script with:                                                                                                                #
+#   sbatch --time=5:00:00 --mem=16g --ntasks=2 --wrap="sh ./scripts/transgenic_longread_map.sh <ref.fasta> <query.fasta> [min_length]"  #
+#                                                                                                                                       #
+#########################################################################################################################################
 
 # Check if at least two FASTAs were provided
 if [[ -z "$2" ]]; then
@@ -53,6 +53,39 @@ ref_basename="$(ref_basename%.*}"
 
 echo "The base that will be used for naming is " ${ref_basename}
 echo
+
+total_reads=$(($(wc -l < concat.fastq) / 4))
+
+if (( total_reads > 100000 ))
+then
+  proportion=$(echo "100000 / $total_reads" | bc -l)
+  proportion=$(printf "%.2f" $proportion)
+else
+  proportion=1.0
+fi
+
+echo "Keeping ${proportion} of reads"
+
+module load seqkit
+
+# Randomly select 1000 reads with seqkit and process them
+seqkit sample -p $proportion concat.fastq > concat_50k.fastq
+
+awk '{
+    if (NR % 4 == 1 || NR % 4 == 3) {
+        print $0
+    } else {
+        seq_length=length($0)
+        start=(length / 2) - 50
+        print substr($0, start, 100)
+    }
+}' concat_50k.fastq > concat_50k_100bp.fastq
+
+
+/proj/mckaylab/genomeFiles/fastq_screen_v0.11.1/fastq_screen --force --aligner bowtie2 -conf ./fastq_screen.conf concat_50k_100bp.fastq --outdir ./FQscreen/
+
+rm concat_50k.fastq
+rm concat_50k_100bp.fastq
 
 #Rename each FASTQ read and set up query.fasta
 printf "\n Renaming FASTQ reads and generating FASTA file\n"
