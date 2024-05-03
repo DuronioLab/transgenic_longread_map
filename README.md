@@ -22,6 +22,9 @@ sbatch --time=5:00:00 --mem=16g --ntasks=2 --wrap="sh ./scripts/transgenic_longr
 
 # Required files
 
+## FASTQ
+Single/multiple files and directories that are/include .fastq or .fastq.gz files of long reads
+
 ## Ref.fasta
 A well assembled reference of any size. A reference of just the transgenic locus with the expected insertions is recommended. Errors in this reference can adversely affect the accuracy.
 
