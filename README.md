@@ -8,7 +8,7 @@ Script for use in UNC Longleaf that will take whole genome long read data (FASTQ
 
 Run with
 ```
-sbatch --time=5:00:00 --mem=16g --ntasks=2 --wrap="sh ./scripts/alignment_script.sh <ref.fasta> <query.fasta> [min_length]"
+sbatch --time=5:00:00 --mem=16g --ntasks=2 --wrap="sh ./scripts/transgenic_longread_map.sh --ref <ref.fasta> --query <query.fasta> -- size [min_length] --fastqs <.FASTQ, .FASTQ.GZ, directories, or mix>"
 ```
 
 # Requirements
